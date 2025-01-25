@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E7E5E5; /* Neutral base */
+            color: #5A5A5A;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #7BE0AD;
+            margin-top: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #7BE0AD; /* Header background */
+            color: #FFFFFF;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        header:hover {
+            background-color: #AEE5D8; /* Hover effect */
+            transform: scale(1.05);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Transaction History Section */
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 90%;
+        }
+
+        .card-header {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e426b8;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+      /* Default (Light Mode) Table Styles */
+.summary-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary-container th {
+    background-color: #FF677D;
+    color: #5A5A5A;
+    padding: 15px;
+    border: 1px solid #D4D4D4;
+    font-weight: bold;
+}
+
+.summary-container td {
+    background-color: #A8E6CF;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #D4D4D4;
+}
+
+.summary-container tr:hover td {
+    background-color: #18e47e;
+}
+
+.summary-container tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.summary-container tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.summary-container tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.summary-container tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+/* Dark Mode Table Styles */
+body.dark-mode .summary-container table {
+    background-color: #2b2b2b; /* Dark table background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Darker shadow for depth */
+}
+
+body.dark-mode .summary-container th {
+    background-color: #444; /* Dark header background */
+    color: #ddd; /* Light text for contrast */
+    border: 1px solid #555; /* Subtle border for header cells */
+}
+
+body.dark-mode .summary-container td {
+    background-color: #333; /* Darker cell background */
+    color: #ccc; /* Light text for readability */
+    border: 1px solid #444; /* Subtle border for data cells */
+}
+
+body.dark-mode .summary-container tr:hover td {
+    background-color: #555; /* Slightly lighter hover effect */
+}
+
+
+
+        /* Chart Cards */
+        .chart-card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 90%;
+        }
+
+        .chart-card h3 {
+            color: #18e47e;
+            font-size: 1.6rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .chart-card canvas {
+            display: block;
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #7BE0AD;
+            color: white;
+            border-radius: 50%;
+            padding: 10px 15px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: #AEE5D8;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-btn {
+            background-color: #E5D0E3;
+            color: #5A5A5A;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: block;
+            text-align: left;
+            width: 100%;
+            border: none;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #E0B0D5;
+        }
+
+        .dropdown-container {
+            display: none;
+            padding: 10px 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .modal-content h3 {
+            color: #7BE0AD;
+        }
+
+        .modal-content p {
+            color: #5A5A5A;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #E0B0D5;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        footer {
+            background-color: #AEE5D8;
+            color: #5A5A5A;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        /* Dropdown Button Styles */
+.dropdown-btn {
+    background-color: #E5D0E3;
+    color: #5A5A5A;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: none;
+    position: relative; /* Positioning for the arrow */
+}
+
+/* Add downward arrow to the right side */
+.dropdown-btn::after {
+    content: "▼"; /* Unicode character for a downward arrow */
+    font-size: 18px;
+    color: #5A5A5A;
+    position: absolute;
+    right: 10px; /* Aligns the arrow to the extreme right */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Hover effect for dropdown button */
+.dropdown-btn:hover {
+    background-color: #E0B0D5;
+}
+
+/* Adjusting the arrow color when the button is hovered */
+.dropdown-btn:hover::after {
+    color: #18e47e; /* You can change the arrow color on hover */
+}
+
+    </style>
+</head>
+<body>
+
+    <header>
+        Transaction History Dashboard
+    </header>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle-btn" onclick="toggleTheme()">🌙</button>
+
+    <!-- Monthly Summary Section -->
+    <div class="card">
+        <div class="card-header">Monthly Summary</div>
+        <div class="card-body">
+            <div class="summary-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Credits</th>
+                            <th>Debits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for month, data in monthly_data.items() %}
+                            <tr>
+                                <td>{{ month }}</td>
+                                <td>{{ data.CREDIT }}</td>
+                                <td>{{ data.DEBIT }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-container">
+        <div class="chart-card">
+            <h3>Monthly Bar Chart</h3>
+            <canvas id="monthlyBarChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Balance Trend</h3>
+            <canvas id="balanceTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Transaction History Section -->
+    <div class="card">
+        <div class="card-header">Transaction History</div>
+        <div class="card-body">
+            <button class="dropdown-btn" id="transaction-history-btn">View Transactions</button>
+            <div class="dropdown-container" id="month-dropdown-container">
+                {% for month, transactions in grouped_transactions.items() %}
+                    <button class="dropdown-btn" onclick="showTransactions('{{ month }}')">{{ month }}</button>
+                    <div class="dropdown-container" id="transactions-{{ month }}">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Details</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                    <tr onclick="showTransactionDetails({{ transaction | tojson }})">
+                                        <td>{{ transaction.Transaction_ID }}</td>
+                                        <td>{{ transaction.Date }}</td>
+                                        <td>{{ transaction.Details }}</td>
+                                        <td>{{ transaction.Amount }}</td>
+                                        <td>{{ transaction.Type }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Transaction Details -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Transaction Details</h3>
+            <div id="transaction-detail" class="transaction-detail"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Transaction Dashboard - Developed by Aditya Pandit</p>
+    </footer>
+    <script>
+        // Show/hide the month dropdown when clicking the main "Transaction History" button
+        document.getElementById("transaction-history-btn").onclick = function() {
+            var container = document.getElementById("month-dropdown-container");
+            container.style.display = container.style.display === "none" ? "block" : "none";
+        };
+
+        // Show the transactions for the selected month
+        function showTransactions(month) {
+            var monthContainer = document.getElementById("transactions-" + month);
+            monthContainer.style.display = monthContainer.style.display === "none" ? "block" : "none";
+        }
+        
+
+        // Show transaction details in a modal
+        function showTransactionDetails(transaction) {
+            var modal = document.getElementById("transactionModal");
+            var detailDiv = document.getElementById("transaction-detail");
+            var closeModal = document.getElementById("closeModal");
+
+            // Populate the modal with transaction details
+            detailDiv.innerHTML = `
+                <p><strong>Transaction ID:</strong> ${transaction.Transaction_ID}</p>
+                <p><strong>Date:</strong> ${transaction.Date}</p>
+                <p><strong>Details:</strong> ${transaction.Details}</p>
+                <p><strong>Amount:</strong> ₹${transaction.Amount}</p>
+                <p><strong>Type:</strong> ${transaction.Type}</p>
+                <p><strong>UTR No:</strong> ${transaction.UTR_No || 'N/A'}</p>
+                <p><strong>Paid/Credited Info:</strong> ${transaction.Paid_Credited_Info || 'N/A'}</p>
+            `;
+
+            modal.style.display = "block";
+
+            // Close the modal when the user clicks the close button
+            closeModal.onclick = function() {
+                modal.style.display = "none";
+            };
+
+            // Close the modal if the user clicks outside of the modal
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+        }
+
+        // Monthly Bar Chart
+        const monthlyData = {{ monthly_data | tojson }};
+        const months = Object.keys(monthlyData);
+        const debits = months.map(month => monthlyData[month]["DEBIT"] || 0);
+        const credits = months.map(month => monthlyData[month]["CREDIT"] || 0);
+
+        const ctx1 = document.getElementById("monthlyBarChart").getContext("2d");
+        new Chart(ctx1, {
+            type: "bar",
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: "Debits",
+                        data: debits,
+                        backgroundColor: "rgba(255, 99, 132, 0.6)",
+                    },
+                    {
+                        label: "Credits",
+                        data: credits,
+                        backgroundColor: "rgba(75, 192, 192, 0.6)",
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return `${tooltipItem.dataset.label}: ₹${tooltipItem.raw}`;
+                            },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Months",
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "Amount (₹)",
+                        },
+                    },
+                },
+            },
+        });
+
+        // Balance Trend Chart
+        const balanceData = {{ balance_trend_data | tojson }};
+        const balanceCtx = document.getElementById('balanceTrendChart').getContext('2d');
+        new Chart(balanceCtx, {
+            type: 'line',
+            data: {
+                labels: balanceData.dates,
+                datasets: [{
+                    label: 'Wallet Balance',
+                    data: balanceData.balances,
+                    borderColor: 'blue',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Balance'
+                        }
+                    }
+                }
+            }
+        });
+        
+    </script>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggleBtn = document.querySelector('.theme-toggle-btn');
+            
+            // Toggle dark-mode class
+            body.classList.toggle('dark-mode');
+            
+            // Change button icon
+            if (body.classList.contains('dark-mode')) {
+                themeToggleBtn.textContent = "☀️"; // Light mode icon
+            } else {
+                themeToggleBtn.textContent = "🌙"; // Dark mode icon
+            }
+            
+        }
+        
+    
+        // Apply styles for dark mode
+        document.addEventListener('DOMContentLoaded', () => {
+            const style = document.createElement('style');
+            style.textContent = `
+                body.dark-mode {
+                    background-color: #2C2C2C;
+                    color: #F5F5F5;
+                }
+                    
+                
+                body.dark-mode .card, 
+                body.dark-mode .chart-card {
+                    background-color: #3C3C3C;
+                    color: #E7E7E7;
+                    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+                }
+                    
+                
+                body.dark-mode header {
+                    background-color: #444444;
+                }
+                
+                body.dark-mode .dropdown-btn {
+                    background-color: #555555;
+                    color: #FFFFFF;
+                }
+    
+                body.dark-mode .dropdown-btn:hover {
+                    background-color: #666666;
+                }
+    
+                body.dark-mode .theme-toggle-btn {
+                    background-color: #444444;
+                    color: #FFFFFF;
+                }
+    
+                body.dark-mode footer {
+                    background-color: #444444;
+                    color: #FFFFFF;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+        
+    </script>
+    
+</body>
+</html>

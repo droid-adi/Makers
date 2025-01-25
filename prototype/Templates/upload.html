@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload PDF</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E7E5E5;
+            color: #5A5A5A;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #7BE0AD;
+            color: #FFFFFF;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        header:hover {
+            background-color: #AEE5D8;
+            transform: scale(1.05);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Container Style */
+        .container {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Form Group */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* Label Style */
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+            color: #555;
+        }
+
+        /* Input Fields */
+        input[type="file"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+
+        /* Button Style */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #4A90E2;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: bold;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+
+        button:hover {
+            background-color: #357ABD;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Footer Style */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .footer a {
+            color: #4A90E2;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dark Mode Styling */
+        body.dark-mode {
+            background-color: #2b2b2b;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode header {
+            background-color: #444;
+        }
+
+        body.dark-mode .container {
+            background-color: #34495e;
+        }
+
+        body.dark-mode label {
+            color: #ddd;
+        }
+
+        body.dark-mode input[type="file"], body.dark-mode input[type="number"] {
+            background-color: #333;
+            border-color: #555;
+            color: #ccc;
+        }
+
+        body.dark-mode button {
+            background-color: #444;
+        }
+
+        body.dark-mode button:hover {
+            background-color: #666;
+        }
+
+        body.dark-mode .footer {
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .footer a {
+            color: #ecf0f1;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            header {
+                font-size: 2rem;
+                padding: 20px 15px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 90%;
+            }
+            label {
+                font-size: 14px;
+            }
+            button {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            header {
+                font-size: 1.5rem;
+                padding: 15px;
+            }
+            .container {
+                padding: 15px;
+                max-width: 95%;
+            }
+            label {
+                font-size: 12px;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Upload PDF and Enter Wallet Balance
+    </header>
+
+    <!-- Container for form -->
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload PhonePe Statements PDF:</label>
+                <input type="file" name="file" id="file" required>
+            </div>
+            
+            <!-- <div class="form-group">
+                <label for="initial_balance">Initial Balance:</label>
+                <input type="number" step="0.01" name="initial_balance" id="initial_balance">
+            </div> -->
+            
+            <div class="form-group">
+                <label for="final_balance">Present Balance:</label>
+                <input type="number" step="0.01" name="final_balance" id="final_balance">
+            </div>
+            
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 Aditya Pandit | <a href="#">Privacy Policy</a></p>
+    </div>
+
+    <!-- Theme Toggle Button (if you want to enable dark mode) -->
+    <!-- <button onclick="document.body.classList.toggle('dark-mode')">Toggle Dark Mode</button> -->
+</body>
+</html>
